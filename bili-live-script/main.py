@@ -79,7 +79,7 @@ def read_and_send_cookies(filename, start_port, end_port):
                 print(f"Sent data for {user_remark} to port {start_port} with {cookie_data}")
                 start_port += 1
 
-def send_request(url, method='get', data=None, headers=None):
+def send_request(url, method='get', data=None, headers=None, delay=0):
     """
     Send an HTTP request of specified type to the given URL.
 
@@ -89,6 +89,8 @@ def send_request(url, method='get', data=None, headers=None):
     :param headers: Headers to be used for the request.
     :return: A string describing the result of the request.
     """
+    if delay:
+        time.sleep(delay)
     try:
         # Use the requests library's method corresponding to the specified type
         if method.lower() == 'get':
@@ -169,6 +171,46 @@ def update_advert_in_config(config_path, new_advert_text, is_enabled):
     updated_json_string = json.dumps(config_data, indent=4)
     return updated_json_string
 
+def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false):
+    with ThreadPoolExecutor(max_workers=len(ports)) as executor:
+        future_to_url = {}
+
+        # Check the length of config_file_data_true_list
+        if len(config_file_data_true_list) == 1:
+            # If there is only one element, send this element to all ports
+            config_data_true = config_file_data_true_list[0]
+            for port in ports:
+                request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+
+                # Submit the first request with no delay
+                future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+                future_to_url[future] = request_url
+
+                # Submit the second request with a 5-second delay
+                future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+                future_to_url[future] = request_url
+        else:
+            # If there are multiple elements, send them as originally planned
+            for port, config_data_true in zip(ports, config_file_data_true_list):
+                request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+
+                # Submit the first request with no delay
+                future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+                future_to_url[future] = request_url
+
+                # Submit the second request with a 5-second delay
+                future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+                future_to_url[future] = request_url
+
+        # Collect and display results as they complete
+        for future in as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                result = future.result()
+                print(result)
+            except Exception as exc:
+                print(f"{url} generated an exception: {exc}")
+
 def main():
     parser = argparse.ArgumentParser(description="Control connection operations.")
     parser.add_argument('-d', '--disconnect', action='store_true', help='Only send disconnect requests')
@@ -196,23 +238,38 @@ def main():
     
     if args.message:
         config_file_path = "./config/set-custom-ad-template.json"
+        config_file_data_true_list = []
+        config_file_data_false = update_advert_in_config(config_file_path, "", False)
         if '+' in args.message:
             processed_message = args.message.split('+')
         else:
-            processed_message = args.message
-        config_file_data_true = update_advert_in_config(config_file_path, processed_message, True)
-        config_file_data_false = update_advert_in_config(config_file_path, processed_message, False)
+            processed_message = [args.message]
 
-        requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
-        for request_url in requests_urls:
-            data = {'set': config_file_data_true}
-            send_request(request_url, method='post', data=data, headers=None)
-            time.sleep(5)
-            data = {'set': config_file_data_false}
-            send_request(request_url, method='post', data=data, headers=None)
-        else:
-            print("No config file selected or available.")
+        for message in processed_message:
+            config_file_data_true_list.append(update_advert_in_config(config_file_path, message, True))
+            print(len(config_file_data_true_list))
+        send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false)
         return
+
+    # if args.message:
+    #     config_file_path = "./config/set-custom-ad-template.json"
+    #     if '+' in args.message:
+    #         processed_message = args.message.split('+')
+    #     else:
+    #         processed_message = args.message
+    #     config_file_data_true = update_advert_in_config(config_file_path, processed_message, True)
+    #     config_file_data_false = update_advert_in_config(config_file_path, processed_message, False)
+
+    #     requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
+    #     for request_url in requests_urls:
+    #         data = {'set': config_file_data_true}
+    #         send_request(request_url, method='post', data=data, headers=None)
+    #         time.sleep(5)
+    #         data = {'set': config_file_data_false}
+    #         send_request(request_url, method='post', data=data, headers=None)
+    #     else:
+    #         print("No config file selected or available.")
+    #     return
 
     if args.quiet:
         process_requests(args.single, ports, endpoint="quiet", param=None)
