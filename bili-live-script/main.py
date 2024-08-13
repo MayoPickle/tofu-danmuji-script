@@ -171,45 +171,88 @@ def update_advert_in_config(config_path, new_advert_text, is_enabled):
     updated_json_string = json.dumps(config_data, indent=4)
     return updated_json_string
 
-def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false):
-    with ThreadPoolExecutor(max_workers=len(ports)) as executor:
-        future_to_url = {}
-
-        # Check the length of config_file_data_true_list
-        if len(config_file_data_true_list) == 1:
-            # If there is only one element, send this element to all ports
-            config_data_true = config_file_data_true_list[0]
+def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, single_threaded):
+    if single_threaded:
+        # 使用单线程发送请求
+        for port in ports:
+            request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+            if len(config_file_data_true_list) == 1:
+                config_data_true = config_file_data_true_list[0]
+                send_request(request_url, "post", {'set': config_data_true})
+                time.sleep(5)
+                send_request(request_url, "post", {'set': config_file_data_false})
+            else:
+                for config_data_true in config_file_data_true_list:
+                    send_request(request_url, "post", {'set': config_data_true})
+                    time.sleep(5)
+                    send_request(request_url, "post", {'set': config_file_data_false})
+    else:
+        # 使用多线程发送请求
+        with ThreadPoolExecutor(max_workers=len(ports)) as executor:
+            future_to_url = {}
             for port in ports:
                 request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+                if len(config_file_data_true_list) == 1:
+                    config_data_true = config_file_data_true_list[0]
+                    future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+                    future_to_url[future] = request_url
+                    future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+                    future_to_url[future] = request_url
+                else:
+                    for config_data_true in config_file_data_true_list:
+                        future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+                        future_to_url[future] = request_url
+                        future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+                        future_to_url[future] = request_url
 
-                # Submit the first request with no delay
-                future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
-                future_to_url[future] = request_url
+            # Collect and display results as they complete
+            for future in as_completed(future_to_url):
+                url = future_to_url[future]
+                try:
+                    result = future.result()
+                    print(result)
+                except Exception as exc:
+                    print(f"{url} generated an exception: {exc}")
 
-                # Submit the second request with a 5-second delay
-                future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
-                future_to_url[future] = request_url
-        else:
-            # If there are multiple elements, send them as originally planned
-            for port, config_data_true in zip(ports, config_file_data_true_list):
-                request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+# def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, single_threaded):
+#     with ThreadPoolExecutor(max_workers=len(ports)) as executor:
+#         future_to_url = {}
 
-                # Submit the first request with no delay
-                future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
-                future_to_url[future] = request_url
+#         # Check the length of config_file_data_true_list
+#         if len(config_file_data_true_list) == 1:
+#             # If there is only one element, send this element to all ports
+#             config_data_true = config_file_data_true_list[0]
+#             for port in ports:
+#                 request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
 
-                # Submit the second request with a 5-second delay
-                future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
-                future_to_url[future] = request_url
+#                 # Submit the first request with no delay
+#                 future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+#                 future_to_url[future] = request_url
 
-        # Collect and display results as they complete
-        for future in as_completed(future_to_url):
-            url = future_to_url[future]
-            try:
-                result = future.result()
-                print(result)
-            except Exception as exc:
-                print(f"{url} generated an exception: {exc}")
+#                 # Submit the second request with a 5-second delay
+#                 future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+#                 future_to_url[future] = request_url
+#         else:
+#             # If there are multiple elements, send them as originally planned
+#             for port, config_data_true in zip(ports, config_file_data_true_list):
+#                 request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
+
+#                 # Submit the first request with no delay
+#                 future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
+#                 future_to_url[future] = request_url
+
+#                 # Submit the second request with a 5-second delay
+#                 future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+#                 future_to_url[future] = request_url
+
+#         # Collect and display results as they complete
+#         for future in as_completed(future_to_url):
+#             url = future_to_url[future]
+#             try:
+#                 result = future.result()
+#                 print(result)
+#             except Exception as exc:
+#                 print(f"{url} generated an exception: {exc}")
 
 def main():
     parser = argparse.ArgumentParser(description="Control connection operations.")
@@ -248,7 +291,8 @@ def main():
         for message in processed_message:
             config_file_data_true_list.append(update_advert_in_config(config_file_path, message, True))
             print(len(config_file_data_true_list))
-        send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false)
+            
+        send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, args.single)
         return
 
     # if args.message:

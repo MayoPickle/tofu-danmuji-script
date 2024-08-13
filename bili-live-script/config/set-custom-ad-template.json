@@ -23,7 +23,7 @@
   },
   "advert": {
     "is_open": false,
-    "is_live_open": true,
+    "is_live_open": false,
     "status": 1,
     "time": 3,
     "adverts": ""
