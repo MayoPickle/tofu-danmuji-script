@@ -1,5 +1,6 @@
 import os
 import time
+import sys
 import requests
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -218,70 +219,53 @@ def send_requests_in_parallel(ports, config_file_data_true_list, config_file_dat
                 except Exception as exc:
                     print(f"{url} generated an exception: {exc}")
 
-# def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, single_threaded):
-#     with ThreadPoolExecutor(max_workers=len(ports)) as executor:
-#         future_to_url = {}
-
-#         # Check the length of config_file_data_true_list
-#         if len(config_file_data_true_list) == 1:
-#             # If there is only one element, send this element to all ports
-#             config_data_true = config_file_data_true_list[0]
-#             for port in ports:
-#                 request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
-
-#                 # Submit the first request with no delay
-#                 future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
-#                 future_to_url[future] = request_url
-
-#                 # Submit the second request with a 5-second delay
-#                 future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
-#                 future_to_url[future] = request_url
-#         else:
-#             # If there are multiple elements, send them as originally planned
-#             for port, config_data_true in zip(ports, config_file_data_true_list):
-#                 request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
-
-#                 # Submit the first request with no delay
-#                 future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
-#                 future_to_url[future] = request_url
-
-#                 # Submit the second request with a 5-second delay
-#                 future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
-#                 future_to_url[future] = request_url
-
-#         # Collect and display results as they complete
-#         for future in as_completed(future_to_url):
-#             url = future_to_url[future]
-#             try:
-#                 result = future.result()
-#                 print(result)
-#             except Exception as exc:
-#                 print(f"{url} generated an exception: {exc}")
-
 def main():
     parser = argparse.ArgumentParser(description="Control connection operations.")
     parser.add_argument('-d', '--disconnect', action='store_true', help='Only send disconnect requests')
     parser.add_argument('-s', '--single', action='store_true', help='Use single-threaded mode for requests')
     parser.add_argument('-q', '--quiet', action='store_true', help='Send /quit GET request to all ports')
     parser.add_argument('-l', '--login', action='store_true', help='Send login requests with cookies data to ports')
-    parser.add_argument('-c', '--config', action='store_true', help='Load a configuration file from ./config directory')
+    parser.add_argument('-c', '--config', nargs='?', const=None, default=-1, help='Optional: Sleep for specified seconds and then load the default configuration file')
     parser.add_argument('-m', '--message', type=str, help='Store a custom message')
     args = parser.parse_args()
 
     fleet_nums = get_fleet_nums()
     ports = calculate_ports(fleet_nums)
 
-    if args.config:
-        config_file = choose_config_file()
-        if config_file:
-            config_file_data = update_config_from_file(config_file)
-            requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
-            for request_url in requests_urls:
-                data = {'set': config_file_data}
-                send_request(request_url, method='post', data=data, headers=None)
-        else:
-            print("No config file selected or available.")
-        return
+
+    try:
+        if args.config != -1:
+            config_file = choose_config_file()
+            if config_file:
+                config_file_data = update_config_from_file(config_file)
+                requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
+                for request_url in requests_urls:
+                    data = {'set': config_file_data}
+                    send_request(request_url, method='post', data=data, headers=None)
+            else:
+                print("No config file selected or available.")
+
+            if args.config is not None and int(args.config) > 0:
+                time.sleep(int(args.config))
+                config_file = "./config/set-default-idle.json"
+                config_file_data = update_config_from_file(config_file)
+                requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
+                for request_url in requests_urls:
+                    data = {'set': config_file_data}
+                    send_request(request_url, method='post', data=data, headers=None)
+
+            return
+        
+    except KeyboardInterrupt:
+        print("Interrupt received, updating default configuration...")
+        config_file = "./config/set-default-idle.json"
+        config_file_data = update_config_from_file(config_file)
+        requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
+        for request_url in requests_urls:
+            data = {'set': config_file_data}
+            send_request(request_url, method='post', data=data, headers=None)
+        print("Default configuration updated on interrupt.")
+        sys.exit(0)  # Properly exit the program after handling the interrupt
     
     if args.message:
         config_file_path = "./config/set-custom-ad-template.json"
@@ -299,25 +283,7 @@ def main():
         send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, args.single)
         return
 
-    # if args.message:
-    #     config_file_path = "./config/set-custom-ad-template.json"
-    #     if '+' in args.message:
-    #         processed_message = args.message.split('+')
-    #     else:
-    #         processed_message = args.message
-    #     config_file_data_true = update_advert_in_config(config_file_path, processed_message, True)
-    #     config_file_data_false = update_advert_in_config(config_file_path, processed_message, False)
 
-    #     requests_urls = [f"http://{CONFIG['ip_address']}:{port}/sendSet" for port in ports]
-    #     for request_url in requests_urls:
-    #         data = {'set': config_file_data_true}
-    #         send_request(request_url, method='post', data=data, headers=None)
-    #         time.sleep(5)
-    #         data = {'set': config_file_data_false}
-    #         send_request(request_url, method='post', data=data, headers=None)
-    #     else:
-    #         print("No config file selected or available.")
-    #     return
 
     if args.quiet:
         process_requests(args.single, ports, endpoint="quiet", param=None)
