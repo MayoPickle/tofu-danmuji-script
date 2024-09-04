@@ -179,36 +179,52 @@ def update_advert_in_config(config_path, new_advert_text, is_enabled):
 def send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, single_threaded):
     if single_threaded:
         # 使用单线程发送请求
-        for port in ports:
-            request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
-            if len(config_file_data_true_list) == 1:
+        if len(config_file_data_true_list) == 1:
+            for port in ports:
+                request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
                 config_data_true = config_file_data_true_list[0]
                 send_request(request_url, "post", {'set': config_data_true})
                 time.sleep(5)
                 send_request(request_url, "post", {'set': config_file_data_false})
-            else:
-                for config_data_true in config_file_data_true_list:
-                    send_request(request_url, "post", {'set': config_data_true})
-                    time.sleep(5)
-                    send_request(request_url, "post", {'set': config_file_data_false})
+        else:
+            config_file_index = 0
+            ports_index = 0
+            while config_file_index < len(config_file_data_true_list):
+                if ports_index >= len(ports):
+                    ports_index = 0
+                request_url = f"http://{CONFIG['ip_address']}:{ports[ports_index]}/sendSet"
+                config_data_true = config_file_data_true_list[config_file_index]
+                send_request(request_url, "post", {'set': config_data_true})
+                time.sleep(5)
+                send_request(request_url, "post", {'set': config_file_data_false})
+                ports_index += 1
+                config_file_index += 1
     else:
         # 使用多线程发送请求
         with ThreadPoolExecutor(max_workers=len(ports)) as executor:
             future_to_url = {}
-            for port in ports:
-                request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
-                if len(config_file_data_true_list) == 1:
+            if len(config_file_data_true_list) == 1:
+                for port in ports:
+                    request_url = f"http://{CONFIG['ip_address']}:{port}/sendSet"
                     config_data_true = config_file_data_true_list[0]
                     future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
                     future_to_url[future] = request_url
                     future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
                     future_to_url[future] = request_url
-                else:
-                    for config_data_true in config_file_data_true_list:
-                        future = executor.submit(send_request, request_url, "post", {'set': config_data_true})
-                        future_to_url[future] = request_url
-                        future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
-                        future_to_url[future] = request_url
+            else:
+                config_file_index = 0
+                ports_index = 0
+                while config_file_index < len(config_file_data_true_list):
+                    if ports_index >= len(ports):
+                        ports_index = 0
+                    request_url = f"http://{CONFIG['ip_address']}:{ports[ports_index]}/sendSet"
+                    future = executor.submit(send_request, request_url, "post", {'set': config_file_data_true_list[config_file_index]})
+                    future_to_url[future] = request_url
+                    future = executor.submit(send_request, request_url, "post", {'set': config_file_data_false}, delay=5)
+                    future_to_url[future] = request_url
+
+                    ports_index += 1
+                    config_file_index += 1
 
             # Collect and display results as they complete
             for future in as_completed(future_to_url):
@@ -273,13 +289,14 @@ def main():
         config_file_data_false = update_advert_in_config(config_file_path, "", False)
         if '+' in args.message:
             processed_message = args.message.split('+')
-        else:
-            processed_message = [args.message]
+            for message in processed_message:
+                config_file_data_true_list.append(update_advert_in_config(config_file_path, message, True))
 
-        for message in processed_message:
-            config_file_data_true_list.append(update_advert_in_config(config_file_path, message, True))
-            print(len(config_file_data_true_list))
-            
+        else:
+            message = args.message
+            for _ in ports:
+                config_file_data_true_list.append(update_advert_in_config(config_file_path, message, True))
+        
         send_requests_in_parallel(ports, config_file_data_true_list, config_file_data_false, args.single)
         return
 

@@ -25,8 +25,8 @@
     "is_open": true,
     "is_live_open": true,
     "status": 1,
-    "time": 8,
-    "adverts": "修炼"
+    "time": 300,
+    "adverts": "修炼\n突破\n"
   },
   "follow": {
     "is_open": false,
