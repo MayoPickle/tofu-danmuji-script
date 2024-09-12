@@ -1,0 +1,151 @@
+version: "3.8"
+services:
+  danmuji1:
+    image: zzcabc/danmuji
+    container_name: danmuji1
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23330:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji1/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji1/guardFile:/danmuji/guardFile"
+      - "./data/danmuji1/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji2:
+    image: zzcabc/danmuji
+    container_name: danmuji2
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23331:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji2/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji2/guardFile:/danmuji/guardFile"
+      - "./data/danmuji2/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji3:
+    image: zzcabc/danmuji
+    container_name: danmuji3
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23332:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji3/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji3/guardFile:/danmuji/guardFile"
+      - "./data/danmuji3/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji4:
+    image: zzcabc/danmuji
+    container_name: danmuji4
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23333:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji4/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji4/guardFile:/danmuji/guardFile"
+      - "./data/danmuji4/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji5:
+    image: zzcabc/danmuji
+    container_name: danmuji5
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23334:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji5/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji5/guardFile:/danmuji/guardFile"
+      - "./data/danmuji5/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji6:
+    image: zzcabc/danmuji
+    container_name: danmuji6
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23335:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji6/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji6/guardFile:/danmuji/guardFile"
+      - "./data/danmuji6/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji7:
+    image: zzcabc/danmuji
+    container_name: danmuji7
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23336:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji7/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji7/guardFile:/danmuji/guardFile"
+      - "./data/danmuji7/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji8:
+    image: zzcabc/danmuji
+    container_name: danmuji8
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23337:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji8/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji8/guardFile:/danmuji/guardFile"
+      - "./data/danmuji8/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji9:
+    image: zzcabc/danmuji
+    container_name: danmuji9
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23338:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji9/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji9/guardFile:/danmuji/guardFile"
+      - "./data/danmuji9/log:/danmuji/log"
+    restart: unless-stopped
+
+  danmuji10:
+    image: zzcabc/danmuji
+    container_name: danmuji10
+    dns:
+      - 223.5.5.5
+    ports:
+      - "23339:23333"
+    environment:
+      JAVA_OPTS: "-Xms64m -Xmx128m"
+    volumes:
+      - "./data/danmuji10/Danmuji_log:/danmuji/Danmuji_log"
+      - "./data/danmuji10/guardFile:/danmuji/guardFile"
+      - "./data/danmuji10/log:/danmuji/log"
+    restart: unless-stopped
