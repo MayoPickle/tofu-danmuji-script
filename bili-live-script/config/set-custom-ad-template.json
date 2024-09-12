@@ -79,7 +79,7 @@
     "thank_follow": false,
     "auto_reply": false
   },
-  "is_auto": false,
+  "is_auto": true,
   "win_auto_openSet": true,
   "auto_save_set": false,
   "is_barrage": true,

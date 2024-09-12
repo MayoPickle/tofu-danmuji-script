@@ -22,11 +22,11 @@
     "report_barrage": ""
   },
   "advert": {
-    "is_open": false,
+    "is_open": true,
     "is_live_open": true,
     "status": 1,
-    "time": 8,
-    "adverts": ""
+    "time": 3.1,
+    "adverts": "一路长虹！！"
   },
   "follow": {
     "is_open": false,
