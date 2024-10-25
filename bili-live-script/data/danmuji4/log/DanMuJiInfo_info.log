@@ -1,0 +1,42 @@
+2024-10-25 13:11:36,572 INFO  BiliBiliDanmujiApplication:55 -Starting BiliBiliDanmujiApplication using Java 1.8.0_342 on 3b3f5026e4ed with PID 7 (/danmuji/danmuji.jar started by root in /danmuji)
+2024-10-25 13:11:37,152 INFO  BiliBiliDanmujiApplication:645 -No active profile set, falling back to 1 default profile: "default"
+2024-10-25 13:12:56,936 INFO  TomcatWebServer:108 -Tomcat initialized with port(s): 23333 (http)
+2024-10-25 13:12:58,257 INFO  Http11NioProtocol:173 -Initializing ProtocolHandler ["http-nio-23333"]
+2024-10-25 13:12:58,291 INFO  StandardService:173 -Starting service [Tomcat]
+2024-10-25 13:12:58,319 INFO  StandardEngine:173 -Starting Servlet engine: [Apache Tomcat/9.0.63]
+2024-10-25 13:13:03,622 INFO  [/]:173 -Initializing Spring embedded WebApplicationContext
+2024-10-25 13:13:03,637 INFO  ServletWebServerApplicationContext:290 -Root WebApplicationContext: initialization completed in 84010 ms
+2024-10-25 13:14:21,818 INFO  HttpUserData:311 -未登录，请登录:{"msg":"请先登录","code":-500,"data":[],"message":"请先登录"}
+2024-10-25 13:14:26,132 INFO  DanmujiInitService:120 -读取配置文件成功
+2024-10-25 13:14:30,153 INFO  WelcomePageHandlerMapping:57 -Adding welcome page template: index
+2024-10-25 13:14:38,469 INFO  Http11NioProtocol:173 -Starting ProtocolHandler ["http-nio-23333"]
+2024-10-25 13:14:39,474 INFO  TomcatWebServer:220 -Tomcat started on port(s): 23333 (http) with context path ''
+2024-10-25 13:14:39,939 INFO  BiliBiliDanmujiApplication:61 -Started BiliBiliDanmujiApplication in 206.07 seconds (JVM running for 241.939)
+2024-10-25 13:14:41,479 ERROR SetServiceImpl:99 -自动打开浏览器错误: 错误信息为: 
+java.io.IOException: Cannot run program "xdg-open": error=2, No such file or directory
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1048) ~[?:1.8.0_342]
+	at java.lang.Runtime.exec(Runtime.java:621) ~[?:1.8.0_342]
+	at java.lang.Runtime.exec(Runtime.java:451) ~[?:1.8.0_342]
+	at java.lang.Runtime.exec(Runtime.java:348) ~[?:1.8.0_342]
+	at xyz.acproject.danmuji.service.impl.SetServiceImpl.init(SetServiceImpl.java:91) ~[classes!/:?]
+	at xyz.acproject.danmuji.BiliBiliDanmujiApplication.run(BiliBiliDanmujiApplication.java:30) ~[classes!/:?]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:782) ~[spring-boot-2.6.8.jar!/:2.6.8]
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:766) ~[spring-boot-2.6.8.jar!/:2.6.8]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:314) ~[spring-boot-2.6.8.jar!/:2.6.8]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1317) ~[spring-boot-2.6.8.jar!/:2.6.8]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-2.6.8.jar!/:2.6.8]
+	at xyz.acproject.danmuji.BiliBiliDanmujiApplication.main(BiliBiliDanmujiApplication.java:24) ~[classes!/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_342]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_342]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_342]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_342]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:49) ~[danmuji.jar:?]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:108) ~[danmuji.jar:?]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:58) ~[danmuji.jar:?]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:88) ~[danmuji.jar:?]
+Caused by: java.io.IOException: error=2, No such file or directory
+	at java.lang.UNIXProcess.forkAndExec(Native Method) ~[?:1.8.0_342]
+	at java.lang.UNIXProcess.<init>(UNIXProcess.java:247) ~[?:1.8.0_342]
+	at java.lang.ProcessImpl.start(ProcessImpl.java:134) ~[?:1.8.0_342]
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1029) ~[?:1.8.0_342]
+	... 19 more

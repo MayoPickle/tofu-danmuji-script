@@ -1,0 +1,8 @@
+2024-10-25 13:06:31,066 INFO  BiliBiliDanmujiApplication:55 -Starting BiliBiliDanmujiApplication using Java 1.8.0_342 on 9655d37b3d68 with PID 7 (/danmuji/danmuji.jar started by root in /danmuji)
+2024-10-25 13:06:31,150 INFO  BiliBiliDanmujiApplication:645 -No active profile set, falling back to 1 default profile: "default"
+2024-10-25 13:06:41,210 INFO  TomcatWebServer:108 -Tomcat initialized with port(s): 23333 (http)
+2024-10-25 13:06:41,412 INFO  Http11NioProtocol:173 -Initializing ProtocolHandler ["http-nio-23333"]
+2024-10-25 13:06:41,416 INFO  StandardService:173 -Starting service [Tomcat]
+2024-10-25 13:06:41,422 INFO  StandardEngine:173 -Starting Servlet engine: [Apache Tomcat/9.0.63]
+2024-10-25 13:06:41,989 INFO  [/]:173 -Initializing Spring embedded WebApplicationContext
+2024-10-25 13:06:41,992 INFO  ServletWebServerApplicationContext:290 -Root WebApplicationContext: initialization completed in 10464 ms
