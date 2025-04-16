@@ -1,16 +1,41 @@
-# Ignore all log files
+# Python related
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Logs
 *.log
-**/log/
-**/logs/
-
-# Specific log directories
-bili-live-script/data/*/log/
-bili-live-script/data/*/Danmuji_log/
-
-# Specific log file patterns
+log/
+logs/
+data/*/log/
+data/*/Danmuji_log/
 *DanMuJiInfo*
 *.log.*
 
-# Sensitive data
-cookies.txt
-**/cookies.txt
+# Editor configs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Virtual environments
+venv/
+env/
+ENV/ 
