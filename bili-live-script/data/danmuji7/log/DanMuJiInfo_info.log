@@ -1,6 +1,0 @@
-2024-10-28 17:00:32,233 INFO  CurrencyTools:68 -获取破站弹幕服务器websocket地址：wss://broadcastlv.chat.bilibili.com:2245/sub
-2024-10-28 17:00:32,465 INFO  Websocket:29 -已尝试连接至服务器地址:wss://broadcastlv.chat.bilibili.com:2245/sub;真实房间号为:1883353860;主播名字为:万能小兔旅店
-2024-10-28 17:00:32,474 INFO  WebSocketProxy:23 -Connectin(连接中)...........................................
-2024-10-28 17:00:34,746 INFO  Websocket:36 -websocket connect open(连接窗口打开)
-2024-10-28 17:00:34,766 INFO  WebSocketProxy:26 -Connecting Success(连接成功)
-2024-10-28 17:00:35,451 INFO  SetServiceImpl:168 -读取配置文件历史房间成功

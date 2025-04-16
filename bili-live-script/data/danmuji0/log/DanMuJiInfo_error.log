@@ -1,9 +1,0 @@
-2024-10-28 09:17:05,258 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:17:05,276 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败
-2024-10-28 09:18:03,366 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:18:03,373 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败
-2024-10-28 09:19:10,878 ERROR Websocket:84 -[错误信息，请将log文件下的日志发送给管理员]websocket connect error,message:null
-2024-10-28 09:19:48,196 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:19:48,200 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败
-2024-10-28 09:29:28,902 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:29:28,907 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败

@@ -1,4 +1,0 @@
-2024-10-28 09:20:52,827 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:20:52,851 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败
-2024-10-28 09:22:12,768 ERROR HttpOtherData:59 -java.lang.NullPointerException
-2024-10-28 09:22:12,773 ERROR HttpOtherData:61 -请求服务器超时，获取最新版本失败
