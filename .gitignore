@@ -10,3 +10,7 @@ bili-live-script/data/*/Danmuji_log/
 # Specific log file patterns
 *DanMuJiInfo*
 *.log.*
+
+# Sensitive data
+cookies.txt
+**/cookies.txt
